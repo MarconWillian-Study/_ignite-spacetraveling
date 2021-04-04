@@ -1,0 +1,49 @@
+.container {
+  max-width: 750px;
+
+  margin: 0 auto;
+
+  .postList {
+    a {
+      strong {
+        display: block;
+        font-weight: bold;
+        font-size: 1.63rem;
+
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: var(--gray-400);
+        font-size: 1.13rem;
+
+        margin-bottom: 1rem;
+      }
+
+      div {
+        margin-bottom: 2rem;
+
+        span {
+          color: var(--gray-400);
+
+          img {
+            margin-right: 0.5rem;
+            top: 3px;
+            position: relative;
+          }
+
+          & + span {
+            margin-left: 1rem;
+          }
+        }
+      }
+
+    }
+  }
+
+  button {
+    background: transparent;
+    border: 0px;
+    color: var(--pink-500);
+  }
+}

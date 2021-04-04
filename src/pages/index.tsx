@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { getPrismicClient } from '../services/prismic';
 
 import Header from '../components/Header';
-import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
 interface Post {
@@ -53,7 +52,7 @@ export default function Home({
   return (
     <>
       <Header />
-      <main>
+      <main className={styles.container}>
         <div className={styles.postList}>
           {posts.map(post => {
             return (
@@ -66,7 +65,10 @@ export default function Home({
                       <img src="/date.svg" alt="Data de publicação" />
                       {format(
                         new Date(post.first_publication_date),
-                        'dd MMM Y'
+                        'dd MMM Y',
+                        {
+                          locale: ptBR,
+                        }
                       ).toLowerCase()}
                     </span>
                     <span>
@@ -96,7 +98,7 @@ export const getStaticProps: GetStaticProps = async () => {
     [Prismic.predicates.at('document.type', 'posts')],
     {
       fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
-      pageSize: 1,
+      pageSize: 5,
     }
   );
 
