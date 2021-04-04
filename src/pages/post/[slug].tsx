@@ -1,6 +1,9 @@
+/* eslint-disable react/no-danger */
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { RichText } from 'prismic-dom';
 import Prismic from '@prismicio/client';
+import { format } from 'date-fns';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
@@ -30,9 +33,7 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps): JSX.Element {
-  if (!post) {
-    return <h2>Página não encontrada</h2>;
-  }
+  const router = useRouter();
 
   const wordsToRead = post?.data?.content.reduce((accounter, content) => {
     const numberHeading = content.heading.split(' ').length;
@@ -46,6 +47,45 @@ export default function Post({ post }: PostProps): JSX.Element {
   return (
     <>
       <Header />
+      <main>
+        <img src={post?.data?.banner.url} alt={post?.data?.title} />
+        <article>
+          <strong>
+            {router.isFallback
+              ? 'Carregando...'
+              : post?.data?.title || 'Título'}
+          </strong>
+          <div>
+            <span>
+              <img src="/date.svg" alt="Data de publicação" />
+              {format(
+                new Date(post.first_publication_date),
+                'dd MMM Y'
+              ).toLowerCase()}
+            </span>
+            <span>
+              <img src="/author.svg" alt="Autor" />
+              {post.data.author}
+            </span>
+            <span>
+              <img src="/timer.svg" alt="Timer" />
+              {timeToRead} min
+            </span>
+            {post.data.content.map(content => {
+              return (
+                <div>
+                  <h2>{content.heading}</h2>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: RichText.asHtml(content.body),
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </article>
+      </main>
     </>
   );
 }
