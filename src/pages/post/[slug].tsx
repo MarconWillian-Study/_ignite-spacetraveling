@@ -30,7 +30,11 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps): JSX.Element {
-  const wordsToRead = post.data.content.reduce((accounter, content) => {
+  if (!post) {
+    return <h2>Página não encontrada</h2>;
+  }
+
+  const wordsToRead = post?.data?.content.reduce((accounter, content) => {
     const numberHeading = content.heading.split(' ').length;
     const numberBody = RichText.asText(content.body).split(' ').length;
 
@@ -38,7 +42,7 @@ export default function Post({ post }: PostProps): JSX.Element {
   }, 0);
 
   const timeToRead = Math.ceil(wordsToRead / 200);
-  console.log(timeToRead);
+
   return (
     <>
       <Header />
