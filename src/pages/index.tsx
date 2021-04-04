@@ -58,7 +58,7 @@ export default function Home({
             return (
               <Link href={`/post/${post.uid}`} key={post.uid}>
                 <a>
-                  <strong>{post.data.title}</strong>
+                  <h1>{post.data.title}</h1>
                   <p>{post.data.subtitle}</p>
                   <div>
                     <span>
