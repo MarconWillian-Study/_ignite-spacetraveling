@@ -58,7 +58,7 @@ export default function Post({ post }: PostProps): JSX.Element {
           <div>
             <span>
               <img src="/date.svg" alt="Data de publicação" />
-              {post.first_publication_date &&
+              {post?.first_publication_date &&
                 format(
                   new Date(post.first_publication_date),
                   'dd MMM Y'
