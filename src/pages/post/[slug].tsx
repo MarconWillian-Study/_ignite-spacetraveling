@@ -8,7 +8,6 @@ import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
 
-import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 interface Post {
@@ -47,15 +46,19 @@ export default function Post({ post }: PostProps): JSX.Element {
   return (
     <>
       <Header />
-      <main>
-        <img src={post?.data?.banner.url} alt={post?.data?.title} />
-        <article>
-          <strong>
+      <main className={styles.container}>
+        <img
+          className={styles.banner}
+          src={post?.data?.banner.url}
+          alt={post?.data?.title}
+        />
+        <article className={styles.article}>
+          <h1>
             {router.isFallback
               ? 'Carregando...'
               : post?.data?.title || 'Título'}
-          </strong>
-          <div>
+          </h1>
+          <div className={styles.infoPost}>
             <span>
               <img src="/date.svg" alt="Data de publicação" />
               {post?.first_publication_date &&
@@ -72,19 +75,20 @@ export default function Post({ post }: PostProps): JSX.Element {
               <img src="/timer.svg" alt="Timer" />
               {timeToRead} min
             </span>
-            {post?.data.content.map(content => {
-              return (
-                <div>
-                  <h2>{content.heading}</h2>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: RichText.asHtml(content.body),
-                    }}
-                  />
-                </div>
-              );
-            })}
           </div>
+
+          {post?.data.content.map(content => {
+            return (
+              <div className={styles.postContent}>
+                <h2>{content.heading}</h2>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: RichText.asHtml(content.body),
+                  }}
+                />
+              </div>
+            );
+          })}
         </article>
       </main>
     </>
