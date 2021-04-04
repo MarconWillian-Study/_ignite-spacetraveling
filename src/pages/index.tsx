@@ -1,13 +1,22 @@
 import { GetStaticProps } from 'next';
+import Link from 'next/link';
 
+import Prismic from '@prismicio/client';
+
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+
+import { useState } from 'react';
 import { getPrismicClient } from '../services/prismic';
 
+import Header from '../components/Header';
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
 interface Post {
   uid?: string;
   first_publication_date: string | null;
+  asd: string | null;
   data: {
     title: string;
     subtitle: string;
@@ -27,64 +36,77 @@ interface HomeProps {
 export default function Home({
   postsPagination: { next_page, results },
 }: HomeProps): JSX.Element {
+  const [posts, setPosts] = useState<Post[]>(results);
+  const [postNextPage, setPostNextPage] = useState(next_page);
+
+  async function getNextPosts(): Promise<void> {
+    const responsePosts = await fetch(postNextPage).then(response =>
+      response.json()
+    );
+
+    const newPosts = responsePosts.results;
+
+    setPosts([...posts, ...newPosts]);
+    setPostNextPage(responsePosts.next_page);
+
+    console.log(posts);
+  }
+
   return (
-    <main>
-      <div className={styles.postList}>
-        {results.map(post => {
-          return (
-            <a href={`/posts/${post.uid}`} key={post.uid}>
-              <strong>{post.data.title}</strong>
-              <p>{post.data.subtitle}</p>
-              <div>
-                <span>
-                  <img src="/images/date.svg" alt="Data de publicação" />
-                  {post.first_publication_date}
-                </span>
-                <span>
-                  <img src="/images/author.svg" alt="Autor" />
-                  {post.data.author}
-                </span>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-      {next_page !== null && <button type="button">Carregar mais posts</button>}
-    </main>
+    <>
+      <Header />
+      <main>
+        <div className={styles.postList}>
+          {posts.map(post => {
+            return (
+              <Link href={`/post/${post.uid}`} key={post.uid}>
+                <a>
+                  <strong>{post.data.title}</strong>
+                  <p>{post.data.subtitle}</p>
+                  <div>
+                    <span>
+                      <img src="/date.svg" alt="Data de publicação" />
+                      {format(
+                        new Date(post.first_publication_date),
+                        'dd MMM Y'
+                      ).toLowerCase()}
+                    </span>
+                    <span>
+                      <img src="/author.svg" alt="Autor" />
+                      {post.data.author}
+                    </span>
+                  </div>
+                </a>
+              </Link>
+            );
+          })}
+        </div>
+        {postNextPage !== null && (
+          <button type="button" onClick={getNextPosts}>
+            Carregar mais posts
+          </button>
+        )}
+      </main>
+    </>
   );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  // const prismic = getPrismicClient();
-  // const postsResponse = await prismic.query(TODO);
-  // TODO
+  const prismic = getPrismicClient();
+
+  const { next_page, results } = await prismic.query(
+    [Prismic.predicates.at('document.type', 'posts')],
+    {
+      fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
+      pageSize: 1,
+    }
+  );
 
   return {
     props: {
       postsPagination: {
-        next_page: '2',
-        results: [
-          {
-            uid: 'name-do-item',
-            first_publication_date: '2021-03-15T19:25:28+0000',
-            data: {
-              title: 'Name do Item',
-              subtitle:
-                'Tudo sobre como criar a sua primeira aplicação utilizando Create React App',
-              author: 'Marcon Willian',
-            },
-          },
-          {
-            uid: 'descricao-completa',
-            first_publication_date: '2021-03-15T19:25:28+0000',
-            data: {
-              title: 'Descrição Completa',
-              subtitle:
-                'Tudo sobre como criar a sua primeira aplicação utilizando Create React App',
-              author: 'Marcon Willian',
-            },
-          },
-        ],
+        next_page,
+        results,
       },
     },
   };

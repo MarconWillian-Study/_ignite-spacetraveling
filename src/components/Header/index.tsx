@@ -1,7 +1,11 @@
+import Link from 'next/link';
+
 export default function Header(): JSX.Element {
   return (
     <header>
-      <img src="/images/logo.svg" alt="space.traveling" />
+      <Link href="/">
+        <img src="/spacetraveling.svg" alt="logo" />
+      </Link>
     </header>
   );
 }
