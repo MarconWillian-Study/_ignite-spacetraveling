@@ -59,19 +59,19 @@ export default function Post({ post }: PostProps): JSX.Element {
             <span>
               <img src="/date.svg" alt="Data de publicação" />
               {format(
-                new Date(post.first_publication_date),
+                new Date(post?.first_publication_date),
                 'dd MMM Y'
               ).toLowerCase()}
             </span>
             <span>
               <img src="/author.svg" alt="Autor" />
-              {post.data.author}
+              {post?.data.author}
             </span>
             <span>
               <img src="/timer.svg" alt="Timer" />
               {timeToRead} min
             </span>
-            {post.data.content.map(content => {
+            {post?.data.content.map(content => {
               return (
                 <div>
                   <h2>{content.heading}</h2>
