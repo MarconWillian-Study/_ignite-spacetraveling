@@ -48,8 +48,6 @@ export default function Home({
 
     setPosts([...posts, ...newPosts]);
     setPostNextPage(responsePosts.next_page);
-
-    console.log(posts);
   }
 
   return (
